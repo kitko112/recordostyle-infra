@@ -8,7 +8,6 @@ jobs:
   deploy:
     name: Deploy S3 Bucket
     runs-on: ubuntu-latest
-    environment: PROD
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
       id-token: write
@@ -17,10 +16,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Configure AWS credentials from Test account
+    - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: ${{ secrets.ASSUME_ROLE_ARN }}
+        role-to-assume: arn:aws:iam::118186523911:role/recordostyle-github-assume-role
         aws-region: us-east-2
 
     - name: Deploy to AWS CloudFormation
