@@ -7,7 +7,6 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: recordostyle.com
-      DeletionPolicy: Retain
       PublicAccessBlockConfiguration: 
         BlockPublicAcls: true
         BlockPublicPolicy: true
