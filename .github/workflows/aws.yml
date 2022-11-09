@@ -25,6 +25,6 @@ jobs:
     - name: Deploy to AWS CloudFormation
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
-        name: s3-bucket-stack
-        template: s3-bucket.yml
+        name: s3-cloudfront
+        template: s3-cloudfront.yml
         parameter-overrides: ""
