@@ -1,5 +1,3 @@
-
-
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
 
@@ -61,4 +59,5 @@ Resources:
           Condition:
             StringEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecordostyleDistribution}
+              
 
