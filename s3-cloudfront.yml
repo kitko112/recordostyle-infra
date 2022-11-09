@@ -1,4 +1,28 @@
 AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  CachePolicy:
+    Description: Cache Policy.
+    Type: String
+    AllowedValues:
+      - CachingOptimized
+      - CachingDisabled
+      - CachingOptimizedForUncompressedObjects
+      - Elemental-MediaPackage
+      - Amplify
+
+Mappings: 
+  CachePolicyIds:
+    CachingOptimized:
+      Id: 658327ea-f89d-4fab-a63d-7e88639e58f6
+    CachingDisabled:
+      Id: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+    CachingOptimizedForUncompressedObjects:
+      Id: b2884449-e4de-46a7-ac36-70bc7f1ddd6d
+    Elemental-MediaPackage:
+      Id: 08627262-05a9-4f76-9ded-b50ca2e3a84f
+    Amplify:
+      Id: 2e54312d-136d-493c-8eb9-b001f22f67d2
 Resources:
 
   RecordostyleS3Bucket:
@@ -35,6 +59,7 @@ Resources:
         DefaultRootObject: index.html
         Comment: Recordostyle distribution
         DefaultCacheBehavior:
+          CachePolicyId: !FindInMap [ CachePolicyIds, !Ref CachePolicy , Id ]
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
         HttpVersion: http2
@@ -59,5 +84,5 @@ Resources:
           Condition:
             StringEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecordostyleDistribution}
-              
+
 

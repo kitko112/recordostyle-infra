@@ -27,4 +27,4 @@ jobs:
       with:
         name: s3-cloudfront
         template: s3-cloudfront.yml
-        parameter-overrides: ""
+        parameter-overrides: "CachePolicy=CachingDisabled" # TODO: change to CachingOptimized once it go live
