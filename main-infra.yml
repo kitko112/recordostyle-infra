@@ -1,4 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
+Description: Main infra setup of Recordostyle
 
 Parameters:
   DomainName:
@@ -55,7 +56,8 @@ Resources:
       DomainName: !Ref DomainName
       DomainValidationOptions: 
         - DomainName: !Ref DomainName
-          HostedZoneId: !Ref RecordostyleHostedZone
+          HostedZoneId: 
+            Fn::ImportValue: recordostyle-hostedzone-id
       SubjectAlternativeNames:
         - !Sub "*.${DomainName}"
       ValidationMethod: DNS

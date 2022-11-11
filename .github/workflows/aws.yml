@@ -30,12 +30,12 @@ jobs:
         no-fail-on-empty-changeset: "1"
         parameter-overrides: "DomainName=recordostyle.com"
 
-    # - name: Deploy recordostyle's main infra
-    #   uses: aws-actions/aws-cloudformation-github-deploy@v1
-    #   with:
-    #     name: recordostyle-main-infra
-    #     template: main-infra.yml
-    #     no-fail-on-empty-changeset: "1"
-    #     parameter-overrides: "DomainName=recordostyle.com,CachePolicy=CachingDisabled" # TODO: change to CachingOptimized once it go live
+    - name: Deploy recordostyle's main infra
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
+      with:
+        name: recordostyle-main-infra
+        template: main-infra.yml
+        no-fail-on-empty-changeset: "1"
+        parameter-overrides: "DomainName=recordostyle.com,CachePolicy=CachingDisabled" # TODO: change to CachingOptimized once it go live
 
 
