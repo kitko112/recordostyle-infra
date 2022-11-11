@@ -13,17 +13,6 @@ Resources:
       HostedZoneConfig:
           Comment: Public DNS zone of recordostyle
 
-  RecordostyleCert:
-    Type: AWS::CertificateManager::Certificate
-    Properties: 
-      DomainName: !Ref DomainName
-      DomainValidationOptions: 
-        - DomainName: recordostyle.com
-          HostedZoneId: !Ref RecordostyleHostedZone
-      SubjectAlternativeNames:
-        - "*.recordostyle.com"
-      ValidationMethod: DNS
-
 Outputs:
   RecordostyleHostedZoneId:
     Description: "Recordostyle HostedZone ID"
@@ -31,9 +20,3 @@ Outputs:
       !Ref RecordostyleHostedZone
     Export:
       Name: recordostyle-hostedzone-id
-  RecordostyleCertArn:
-    Description: "Recordostyle Cert ARN"
-    Value:
-      !Ref RecordostyleCert
-    Export:
-      Name: recordostyle-cert-arn

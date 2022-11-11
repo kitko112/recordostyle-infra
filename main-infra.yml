@@ -16,7 +16,7 @@ Parameters:
       - Amplify
 
 Mappings: 
-  CachePolicyIds:
+  CachePolicyIds: # copy from aws
     CachingOptimized:
       Id: 658327ea-f89d-4fab-a63d-7e88639e58f6
     CachingDisabled:
@@ -49,6 +49,17 @@ Resources:
           SigningBehavior: always
           SigningProtocol: sigv4
 
+  RecordostyleCert:
+    Type: AWS::CertificateManager::Certificate
+    Properties: 
+      DomainName: !Ref DomainName
+      DomainValidationOptions: 
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref RecordostyleHostedZone
+      SubjectAlternativeNames:
+        - !Sub "*.${DomainName}"
+      ValidationMethod: DNS
+
   RecordostyleDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -71,8 +82,7 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         HttpVersion: http2
         ViewerCertificate:
-          ACMCertificateArn: 
-            Fn::ImportValue: recordostyle-cert-arn
+          ACMCertificateArn: !Ref RecordostyleCert
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1
           CloudFrontDefaultCertificate: false
@@ -96,7 +106,6 @@ Resources:
             StringEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecordostyleDistribution}
 
-
   RecordostyleRecordSetGroup:
     Type: 'AWS::Route53::RecordSetGroup'
     Properties:
@@ -115,13 +124,5 @@ Resources:
             HostedZoneId: Z2FDTNDATAQYW2
             DNSName: 
               !GetAtt RecordostyleDistribution.DomainName
-
-Outputs:
-  RecordostyleCloudfrontDomainName:
-    Description: "Cloudfront distribution Domain Name for recordostyle"
-    Value:
-      !GetAtt RecordostyleDistribution.DomainName
-    Export:
-      Name: recordostyle-cloudfront-domain
 
 
