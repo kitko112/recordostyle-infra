@@ -84,10 +84,9 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         HttpVersion: http2
         ViewerCertificate:
-          ACMCertificateArn: !Ref RecordostyleCert
+          AcmCertificateArn: !Ref RecordostyleCert
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1
-          CloudFrontDefaultCertificate: false
         Logging:
           Bucket: !GetAtt RecordostyleS3Bucket.DomainName
           IncludeCookies: false
