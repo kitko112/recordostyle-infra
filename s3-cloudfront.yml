@@ -90,6 +90,19 @@ Resources:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecordostyleDistribution}
 
 
+  RecordostyleRecordSetGroup:
+    Type: 'AWS::Route53::RecordSetGroup'
+    Properties:
+      HostedZoneId: 
+        Fn::ImportValue: recordostyle-hostedzone-id
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: 
+              !GetAtt RecordostyleDistribution.DomainName
+
 Outputs:
   RecordostyleCloudfrontDomainName:
     Description: "Cloudfront distribution Domain Name for recordostyle"
