@@ -21,6 +21,6 @@ Resources:
         - Name: !Ref DomainName
           Type: A
           AliasTarget:
-            HostedZoneId: !Ref RecordostyleHostedZone
+            HostedZoneId: Z2FDTNDATAQYW2
             DNSName: 
               Fn::ImportValue: recordostyle-cloudfront-domain
