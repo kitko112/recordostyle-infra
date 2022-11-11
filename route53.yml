@@ -13,3 +13,14 @@ Resources:
       HostedZoneConfig:
           Comment: Public DNS zone of recordostyle
 
+  RecordostyleRecordSetGroup:
+    Type: 'AWS::Route53::RecordSetGroup'
+    Properties:
+      HostedZoneId: !Ref RecordostyleHostedZone
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: !Ref RecordostyleHostedZone
+            DNSName: 
+              Fn::ImportValue: recordostyle-cloudfront-domain
