@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    name: "Deploy S3 Bucket, Cloudfront Distrubution & Route53"
+    name: "Deploy Infro of Recordostyle"
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
@@ -20,9 +20,9 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: arn:aws:iam::118186523911:role/recordostyle-github-assume-role
-        aws-region: us-east-2
+        aws-region: us-east-1
 
-    - name: Deploy to AWS Route53
+    - name: Deploy to AWS Route53 & Certificate
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         name: route53
