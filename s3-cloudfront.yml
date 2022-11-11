@@ -53,6 +53,9 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        Aliases:
+        - !Ref DomainName
+        - !Sub www.${DomainName}
         Origins:
         - Id: S3Origin
           DomainName: !GetAtt RecordostyleS3Bucket.DomainName
