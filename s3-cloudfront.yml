@@ -96,6 +96,6 @@ Outputs:
     Value:
       !GetAtt RecordostyleDistribution.DomainName
     Export:
-      Name: recordostyle-website-domain
+      Name: recordostyle-cloudfront-domain
 
 
