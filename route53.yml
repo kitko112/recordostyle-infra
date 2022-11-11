@@ -20,8 +20,8 @@ Resources:
       DomainValidationOptions: 
         - DomainName: recordostyle.com
           HostedZoneId: !Ref RecordostyleHostedZone
-        - DomainName: "*.recordostyle.com"
-          HostedZoneId: !Ref RecordostyleHostedZone
+      SubjectAlternativeNames:
+        - "*.recordostyle.com"
       ValidationMethod: DNS
 
 Outputs:
