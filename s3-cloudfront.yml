@@ -1,6 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
+  DomainName:
+    Description: Domain name of recordostyle
+    Type: String
+
   CachePolicy:
     Description: Cache Policy.
     Type: String
@@ -28,7 +32,7 @@ Resources:
   RecordostyleS3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: recordostyle.com
+      BucketName: !Ref DomainName
       PublicAccessBlockConfiguration: 
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -84,5 +88,14 @@ Resources:
           Condition:
             StringEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecordostyleDistribution}
+
+
+Outputs:
+  RecordostyleCloudfrontDomainName:
+    Description: "Cloudfront distribution Domain Name for recordostyle"
+    Value:
+      !GetAtt RecordostyleDistribution.DomainName
+    Export:
+      Name: recordostyle-website-domain
 
 

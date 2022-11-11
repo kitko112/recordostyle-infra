@@ -4,9 +4,12 @@ on:
   push:
     branches: [ "main" ]
 
+env:
+  DOMAIN_NAME: recordostyle.com
+
 jobs:
   deploy:
-    name: Deploy S3 Bucket & Cloudfront Distrubution
+    name: "Deploy S3 Bucket, Cloudfront Distrubution & Route53"
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
@@ -27,4 +30,12 @@ jobs:
       with:
         name: s3-cloudfront
         template: s3-cloudfront.yml
-        parameter-overrides: "CachePolicy=CachingDisabled" # TODO: change to CachingOptimized once it go live
+        parameter-overrides: "DomainName=$DOMAIN_NAME,CachePolicy=CachingDisabled" # TODO: change to CachingOptimized once it go live
+
+    - name: Deploy to AWS Route53
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
+      with:
+        name: s3-cloudfront
+        template: route53.yml
+        parameter-overrides: "DomainName=$DOMAIN_NAME"
+
