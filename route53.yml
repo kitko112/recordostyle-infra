@@ -6,9 +6,10 @@ Parameters:
     Type: String
 
 Resources:
-  Type: AWS::Route53::HostedZone
-  Properties: 
-    Name: !Sub ${DomainName}.
-    HostedZoneConfig:
-        Comment: Public DNS zone of recordostyle
+  RecordostyleHostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties: 
+      Name: !Sub ${DomainName}.
+      HostedZoneConfig:
+          Comment: Public DNS zone of recordostyle
 
