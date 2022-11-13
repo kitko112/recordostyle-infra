@@ -80,9 +80,20 @@ Resources:
         IntegrationResponses:
           - StatusCode: '200'
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Origin: '''https://recordostyle.com'''
+              method.response.header.Access-Control-Allow-Headers: >-
+                'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+            ResponseTemplates:
+              application/json: >-
+                #set($origin = $input.params("Origin"))
+
+                #if($origin == "") #set($origin = $input.params("origin")) #end
+
+                #if($origin.matches("https://recordostyle[.]com") ||
+                $origin.matches("https://www[.]recordostyle[.]com"))
+                #set($context.responseOverride.header.Access-Control-Allow-Origin
+                = $origin) #end
         PassthroughBehavior: NEVER
         RequestParameters:
           integration.request.header.Content-Type: '''application/x-www-form-urlencoded'''
@@ -95,13 +106,12 @@ Resources:
             - !Ref 'AWS::Region'
             - :sns:path//
       MethodResponses:
-        - ResponseModels:
-            application/json: Empty
+        - StatusCode: '200'
           ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
             method.response.header.Access-Control-Allow-Headers: true
             method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-          StatusCode: '200'
+          ResponseModels: {}
       ResourceId: !Ref InquiryResource
       RestApiId: !Ref APIGateway
 
@@ -113,26 +123,34 @@ Resources:
       RestApiId: !Ref APIGateway
       HttpMethod: OPTIONS
       Integration:
-        IntegrationResponses:
-        - ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
-            method.response.header.Access-Control-Allow-Origin: "'*'"
-          ResponseTemplates:
-            application/json: ''
-          StatusCode: '200'
-        PassthroughBehavior: NEVER
-        RequestTemplates:
-          application/json: '{"statusCode": 200}'
         Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''https://recordostyle.com'''
+              method.response.header.Access-Control-Allow-Headers: >-
+                'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,POST'''
+            ResponseTemplates:
+              application/json: >-
+                #set($origin = $input.params("Origin"))
+
+                #if($origin == "") #set($origin = $input.params("origin")) #end
+
+                #if($origin.matches("https://recordostyle[.]com") ||
+                $origin.matches("https://www[.]recordostyle[.]com"))
+                #set($context.responseOverride.header.Access-Control-Allow-Origin
+                = $origin) #end
       MethodResponses:
-      - StatusCode: 200
-        ResponseModels:
-          application/json: 'Empty'
-        ResponseParameters:
-          method.response.header.Access-Control-Allow-Headers: true
-          method.response.header.Access-Control-Allow-Methods: true
-          method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+          ResponseModels: {}
     
   InquiryResource:
     Type: AWS::ApiGateway::Resource
