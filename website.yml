@@ -50,18 +50,6 @@ Resources:
           SigningBehavior: always
           SigningProtocol: sigv4
 
-  RecordostyleCert:
-    Type: AWS::CertificateManager::Certificate
-    Properties: 
-      DomainName: !Ref DomainName
-      DomainValidationOptions: 
-        - DomainName: !Ref DomainName
-          HostedZoneId: 
-            Fn::ImportValue: recordostyle-hostedzone-id
-      SubjectAlternativeNames:
-        - !Sub "*.${DomainName}"
-      ValidationMethod: DNS
-
   RecordostyleDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -84,7 +72,8 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         HttpVersion: http2
         ViewerCertificate:
-          AcmCertificateArn: !Ref RecordostyleCert
+          AcmCertificateArn: 
+            Fn::ImportValue: recordostyle-cert-arn
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1
         Logging:
@@ -107,7 +96,7 @@ Resources:
             StringEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${RecordostyleDistribution}
 
-  RecordostyleRecordSetGroup:
+  RecordostyleWebsiteRecordSetGroup:
     Type: 'AWS::Route53::RecordSetGroup'
     Properties:
       HostedZoneId: 
