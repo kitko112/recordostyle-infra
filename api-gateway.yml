@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: API Gateway integration with SNS
-  
+
+Parameters:
+  DomainName:
+    Description: Domain name of recordostyle
+    Type: String
+
 Resources:
   APIGateway:
     Type: AWS::ApiGateway::RestApi
@@ -100,3 +105,25 @@ Resources:
       PathPart: v1
       RestApiId: !Ref APIGateway
     
+  ApiDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn:
+        Fn::ImportValue: recordostyle-cert-arn
+      DomainName: !Sub api.${DomainName}
+      EndpointConfiguration:
+        Types:
+          - EDGE
+      SecurityPolicy: TLS_1_2
+
+  ApiGatewayRecordSetGroup:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: 
+        Fn::ImportValue: recordostyle-hostedzone-id
+      RecordSets:
+        - Name: !Sub api.${DomainName}
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt ApiDomainName.DistributionDomainName
+            HostedZoneId: !GetAtt ApiDomainName.DistributionHostedZoneId

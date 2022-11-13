@@ -44,6 +44,7 @@ jobs:
         name: recordostyle-api-gateway
         template: api-gateway.yml
         no-fail-on-empty-changeset: "1"
+        parameter-overrides: "DomainName=recordostyle.com"
         capabilities: CAPABILITY_NAMED_IAM
 
 
