@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: API Gateway integration with SNS
+  
+Resources:
+  APIGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Description: Recordostyle API Endpoint to receive JSON payloads
+      Name: recordostyle-api-gateway
+    
+  APIGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action: sns:Publish
+                Effect: Allow
+                Resource: !Ref SNSTopic
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: '*'
+            Version: '2012-10-17'
+          PolicyName: recordostyle-api-gateway-policy
+      RoleName: recordostyle-api-gateway-role
+
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: recordostyle-inquiry
+      Subscription:
+        - Endpoint: kitko112@gmail.com
+          Protocol: email
+
+  PostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        Credentials: !GetAtt 'APIGatewayRole.Arn'
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: '200'
+        PassthroughBehavior: NEVER
+        RequestParameters:
+          integration.request.header.Content-Type: '"application/x-www-form-urlencoded"'
+        RequestTemplates:
+          application/json: !Sub Action=Publish&TopicArn=$util.urlEncode('${SNSTopic}')&Message=$util.urlEncode($input.body)
+        Type: AWS
+        Uri: !Join
+          - ''
+          - - 'arn:aws:apigateway:'
+            - !Ref 'AWS::Region'
+            - :sns:path//
+      MethodResponses:
+        - ResponseModels:
+            application/json: Empty
+          StatusCode: '200'
+      ResourceId: !Ref InquiryResource
+      RestApiId: !Ref APIGateway
+    
+  InquiryResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref V1Resource
+      PathPart: inquiry
+      RestApiId: !Ref APIGateway
+    
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: PostMethod
+    Properties:
+      RestApiId: !Ref 'APIGateway'
+    
+  ProdStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref Deployment
+      RestApiId: !Ref APIGateway
+      StageName: prod
+    
+  V1Resource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt APIGateway.RootResourceId
+      PathPart: v1
+      RestApiId: !Ref APIGateway
+    
