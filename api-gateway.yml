@@ -57,7 +57,7 @@ Resources:
           - StatusCode: '200'
         PassthroughBehavior: NEVER
         RequestParameters:
-          integration.request.header.Content-Type: '"application/x-www-form-urlencoded"'
+          integration.request.header.Content-Type: '''application/x-www-form-urlencoded'''
         RequestTemplates:
           application/json: !Sub Action=Publish&TopicArn=$util.urlEncode('${SNSTopic}')&Message=$util.urlEncode($input.body)
         Type: AWS
