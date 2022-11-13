@@ -79,6 +79,10 @@ Resources:
         IntegrationHttpMethod: POST
         IntegrationResponses:
           - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
         PassthroughBehavior: NEVER
         RequestParameters:
           integration.request.header.Content-Type: '''application/x-www-form-urlencoded'''
@@ -93,6 +97,10 @@ Resources:
       MethodResponses:
         - ResponseModels:
             application/json: Empty
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
           StatusCode: '200'
       ResourceId: !Ref InquiryResource
       RestApiId: !Ref APIGateway
@@ -106,14 +114,14 @@ Resources:
       HttpMethod: OPTIONS
       Integration:
         IntegrationResponses:
-        - StatusCode: 200
-          ResponseParameters:
+        - ResponseParameters:
             method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
-            method.response.header.Access-Control-Allow-Origin: !Sub "'https://www.${DomainName},https://${DomainName}'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
           ResponseTemplates:
             application/json: ''
-        PassthroughBehavior: WHEN_NO_MATCH
+          StatusCode: '200'
+        PassthroughBehavior: NEVER
         RequestTemplates:
           application/json: '{"statusCode": 200}'
         Type: MOCK
@@ -122,9 +130,9 @@ Resources:
         ResponseModels:
           application/json: 'Empty'
         ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: false
-            method.response.header.Access-Control-Allow-Methods: false
-            method.response.header.Access-Control-Allow-Origin: false
+          method.response.header.Access-Control-Allow-Headers: true
+          method.response.header.Access-Control-Allow-Methods: true
+          method.response.header.Access-Control-Allow-Origin: true
     
   InquiryResource:
     Type: AWS::ApiGateway::Resource
