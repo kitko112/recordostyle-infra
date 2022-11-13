@@ -59,7 +59,7 @@ Resources:
         RequestParameters:
           integration.request.header.Content-Type: '''application/x-www-form-urlencoded'''
         RequestTemplates:
-          application/json: !Sub Action=Publish&TopicArn=$util.urlEncode('${SNSTopic}')&Message=$util.urlEncode($input.body)
+          application/json: !Sub Action=Publish&TopicArn=$util.urlEncode('${SNSTopic}')&Message=$util.urlEncode($input.body)&Subject=$util.urlEncode('Recordostyle Inquiry Received')
         Type: AWS
         Uri: !Join
           - ''
