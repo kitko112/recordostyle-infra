@@ -81,7 +81,7 @@ Resources:
   InquiryResource:
     Type: AWS::ApiGateway::Resource
     Properties:
-      ParentId: !Ref V1Resource
+      ParentId: !GetAtt APIGateway.RootResourceId
       PathPart: inquiry
       RestApiId: !Ref APIGateway
     
@@ -98,23 +98,27 @@ Resources:
       RestApiId: !Ref APIGateway
       StageName: prod
     
-  V1Resource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      ParentId: !GetAtt APIGateway.RootResourceId
-      PathPart: v1
-      RestApiId: !Ref APIGateway
-    
   ApiDomainName:
     Type: AWS::ApiGateway::DomainName
     Properties:
-      CertificateArn:
+      RegionalCertificateArn:
         Fn::ImportValue: recordostyle-cert-arn
       DomainName: !Sub api.${DomainName}
       EndpointConfiguration:
         Types:
-          - EDGE
+          - REGIONAL
       SecurityPolicy: TLS_1_2
+
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: "v1"
+      DomainName:
+        Ref: ApiDomainName
+      RestApiId:
+        Ref: APIGateway
+      Stage:
+        Ref: ProdStage
 
   ApiGatewayRecordSetGroup:
     Type: AWS::Route53::RecordSetGroup
@@ -125,5 +129,5 @@ Resources:
         - Name: !Sub api.${DomainName}
           Type: A
           AliasTarget:
-            DNSName: !GetAtt ApiDomainName.DistributionDomainName
-            HostedZoneId: !GetAtt ApiDomainName.DistributionHostedZoneId
+            DNSName: !GetAtt ApiDomainName.RegionalDomainName
+            HostedZoneId: !GetAtt ApiDomainName.RegionalHostedZoneId
