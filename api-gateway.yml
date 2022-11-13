@@ -12,7 +12,26 @@ Resources:
     Properties:
       Description: Recordostyle API Endpoint to receive JSON payloads
       Name: recordostyle-api-gateway
-    
+      
+  ApiGwAccountConfig:
+    Type: "AWS::ApiGateway::Account"
+    Properties:
+      CloudWatchRoleArn: !GetAtt "ApiGatewayLoggingRole.Arn"
+  ApiGatewayLoggingRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+
   APIGatewayRole:
     Type: AWS::IAM::Role
     Properties:
@@ -97,6 +116,10 @@ Resources:
       DeploymentId: !Ref Deployment
       RestApiId: !Ref APIGateway
       StageName: prod
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
+        Format: '{"logSource":"apigateway", "requestId":"$context.requestId", "ip":"$context.identity.sourceIp", "api_id":"$context.apiId", "caller":"$context.identity.caller", "user":"$context.identity.user", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod", "path":"$context.path", "resource_path":"$context.resourcePath", "status":"$context.status", "protocol":"$context.protocol", "responseLength":"$context.responseLength", "responseLatency":"$context.responseLatency", "error_message":"$context.error.message"}'
+      
     
   ApiDomainName:
     Type: AWS::ApiGateway::DomainName
@@ -131,3 +154,9 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt ApiDomainName.RegionalDomainName
             HostedZoneId: !GetAtt ApiDomainName.RegionalHostedZoneId
+
+  ApiGatewayLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/apigateway/${DomainName}/prod"
+      RetentionInDays: 5
