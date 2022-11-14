@@ -68,6 +68,8 @@ Resources:
       Subscription:
         - Endpoint: kitko112@gmail.com
           Protocol: email
+        - Endpoint: recordostyle@gmail.com
+          Protocol: email
 
   PostMethod:
     Type: AWS::ApiGateway::Method
