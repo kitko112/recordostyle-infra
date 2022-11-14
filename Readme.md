@@ -1,14 +1,20 @@
-# RecordoStyle Infra
-This repos is responsible for infro setup for recordostyle.com
-- S3 bucket
-- Cloudfront Distribution with OCA 
-- Route 53 (need to update Godaddy NS after deploy)
-- Cert (works only after NS updated)
-- Api Gateway -> SNS
+# Recordostyle
+We are starting a production house, at this early stage a website with inquiry feature is needed. To make it simple the web hosting and inquiry email notification can be done by using AWS. This repos contains the resources provisioning for recordostyle.com.
+
+## Infra
+
+- S3 bucket (Store the website content of html, css, js ...etc )
+- Cloudfront Distribution with OCA (Provide https for the website)
+- Route 53 (Provide NS for the domain and routing, need point Godaddy to AWS NS)
+- Certificate Manager (works only after NS updated)
+- Api Gateway (integration point for the website) -> SNS (push notification to our email)
+
+### Architecture Diagram
+![Architecture Diagram](recordostyle-infra.png)
 
 ## Local test POST inquiry endpoint
 ```
 curl -X POST https://api.recordostyle.com/v1/inquiry \
-  --data "{'message': 'Hello, from your terminal!'}" \
+  --data "Hello, from your terminal!" \
   -H 'Content-Type: application/json'
 ```
